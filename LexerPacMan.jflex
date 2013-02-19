@@ -11,7 +11,7 @@ import java_cup.runtime.*;
 %line
 %column
 %unicode
-%class PascalLexer
+%class LexerPacMan
 
 %{
 
@@ -51,7 +51,7 @@ llaveDer         = \}
 noLlaveDer       = [^}]
 cuerpoComentario = {noLlaveDer}*
 comentario       = {llaveIzq}{cuerpoComentario}{llaveDer}
-espacioBlanco    = \r|\n|\r\n|" "|\t\f
+espacio          = \r|\n|\r\n|" "|\t\f
 
 
 %%
@@ -90,12 +90,12 @@ var             { return nuevoSimbolo(sym.VAR); }
 ":"             { return nuevoSimbolo(sym.COLON); }
 ":="            { return nuevoSimbolo(sym.ASSMNT); }
 "."             { return nuevoSimbolo(sym.DOT); }
-{identifier}    { return nuevoSimbolo(sym.IDENT, yytext()); }
-{integer}       { return nuevoSimbolo(sym.INT, new Integer(yytext())); }
+{identificador} { return nuevoSimbolo(sym.IDENT, yytext()); }
+{entero}        { return nuevoSimbolo(sym.INT, new Integer(yytext())); }
 {real}          { return nuevoSimbolo(sym.REAL, new Double(yytext())); }
-{char}          { return nuevoSimbolo(sym.CHAR, new Character(yytext().charAt(1))); }
-{comment}       { /* For this stand-alone lexer, print out comments. */
+{caracter}      { return nuevoSimbolo(sym.CHAR, new Character(yytext().charAt(1))); }
+{comentario}    { /* Los comentarios se imprimirán */
                   System.out.println("Recognized comment: " + yytext()); }
-{whitespace}    { /* Ignore whitespace. */ }
-.               { System.out.println("Illegal char, '" + yytext() +
+{espacio}        { /* Ignorar todos los espacios*/ }
+.                { System.out.println("Caracter Ilegal, '" + yytext() +
                     "' line: " + yyline + ", column: " + yychar); }

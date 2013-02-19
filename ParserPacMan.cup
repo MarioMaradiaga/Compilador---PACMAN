@@ -1,0 +1,10 @@
+// JavaCup specification for a simple expression evaluator (w/ actions)
+
+package java_cup.PacMan;
+
+import java_cup.runtime.*;
+
+/* Terminals (tokens returned by the scanner). */
+terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD;
+terminal           UMINUS, LPAREN, RPAREN;
+terminal Integer   NUMBER;
