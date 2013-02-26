@@ -12,7 +12,8 @@ terminal            CASE, ASIG, MULT, SUMA, RESTA, DIV, PUNTOCOMA, COMA;
 terminal            PARIZQ, PARDER, BRAIZQ, BRADER, LLAIZQ, LLADER, MENOR;
 terminal            MAYOR, MENORIGUAL, MAYORIGUAL, IGUAL, NOIGUAL; 
 terminal            DOSPUNTOS, PUNTO, BREAK, IDENT, ELSE, TRUE, FALSE;
-terminal            NULL, FUNCTION, VOID, RETURN;
+terminal            NULL, FUNCTION, VOID, RETURN, COMILLA, COMILLADOBLE;
+terminal            STRINGVAL, SIMBOLO;
 terminal Integer    NUMERO;
 
 /* Non terminals */

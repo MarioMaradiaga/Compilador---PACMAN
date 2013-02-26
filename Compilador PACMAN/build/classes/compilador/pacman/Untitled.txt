@@ -1,0 +1,23 @@
+ent x -> 4:
+bin y -> verdadero:
+dec z -> 7.9:
+sim m -> '6':
+pal n -> "Hola":
+
+cur(ent t -> 0: t < 5: t -> t + 1)[
+    si (t=2)[
+        n->"Adios":
+    ]   
+]
+
+mientras (z > 5)[
+    z -> z-1:
+]
+
+encasode(m)[
+    caso '6';
+        y -> falso:
+    fincaso:
+]
+
+{ESTE ES UN COMENTARIO}

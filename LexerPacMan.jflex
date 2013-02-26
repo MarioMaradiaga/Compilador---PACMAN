@@ -7,6 +7,7 @@ import java_cup.runtime.*;
  * FUNCIONES LÉXICAS:
  */
 
+
 %cup
 %line
 %column
@@ -16,20 +17,20 @@ import java_cup.runtime.*;
 %{
 
 /**
- * Retorna un nuevo Simbolo con el id del token y la columna y 
+ * Retorna un nuevo Symbol con el id del token y la columna y 
  * fila del mismo.
  */
-Simbolo nuevoSimbolo(int tokenId) {
-    return new Simbolo(tokenId, yyline, yycolumn);
+Symbol nuevoSymbol(int tokenId) {
+    return new java_cup.runtime.Symbol(tokenId, yyline, yycolumn);
 }
 
 /**
- * Retorna un nuevo simbolo con el id del token, la columna y 
+ * Retorna un nuevo Symbol con el id del token, la columna y 
  * fila del mismo y su valor. El valor es usado para tokens como
  * identificadores y números.
  */
-Simbolo nuevoSimbolo(int tokenId, Object valor) {
-    return new Simbolo(tokenId, yyline, yycolumn, value);
+Symbol nuevoSymbol(int tokenId, Object valor) {
+    return new java_cup.runtime.Symbol(tokenId, yyline, yycolumn, valor);
 }
 
 %}
@@ -54,48 +55,94 @@ comentario       = {llaveIzq}{cuerpoComentario}{llaveDer}
 espacio          = \r|\n|\r\n|" "|\t\f
 
 
+
 %%
 /**
  * REGLAS LEXICAS:
  */
-and             { return nuevoSimbolo(sym.AND); }
-array           { return nuevoSimbolo(sym.ARRAY); }
-begin           { return nuevoSimbolo(sym.BEGIN); }
-else            { return nuevoSimbolo(sym.ELSE); }
-end             { return nuevoSimbolo(sym.END); }
-if              { return nuevoSimbolo(sym.IF); }
-of              { return nuevoSimbolo(sym.OF); }
-or              { return nuevoSimbolo(sym.OR); }
-program         { return nuevoSimbolo(sym.PROGRAM); }
-procedure       { return nuevoSimbolo(sym.PROCEDURE); }
-then            { return nuevoSimbolo(sym.THEN); }
-type            { return nuevoSimbolo(sym.TYPE); }
-var             { return nuevoSimbolo(sym.VAR); }
-"*"             { return nuevoSimbolo(sym.TIMES); }
-"+"             { return nuevoSimbolo(sym.PLUS); }
-"-"             { return nuevoSimbolo(sym.MINUS); }
-"/"             { return nuevoSimbolo(sym.DIVIDE); }
-";"             { return nuevoSimbolo(sym.SEMI); }
-","             { return nuevoSimbolo(sym.COMMA); }
-"("             { return nuevoSimbolo(sym.LEFT_PAREN); }
-")"             { return nuevoSimbolo(sym.RT_PAREN); }
-"["             { return nuevoSimbolo(sym.LEFT_BRKT); }
-"]"             { return nuevoSimbolo(sym.RT_BRKT); }
-"="             { return nuevoSimbolo(sym.EQ); }
-"<"             { return nuevoSimbolo(sym.GTR); }
-">"             { return nuevoSimbolo(sym.LESS); }
-"<="            { return nuevoSimbolo(sym.LESS_EQ); }
-">="            { return nuevoSimbolo(sym.GTR_EQ); }
-"!="            { return nuevoSimbolo(sym.NOT_EQ); }
-":"             { return nuevoSimbolo(sym.COLON); }
-":="            { return nuevoSimbolo(sym.ASSMNT); }
-"."             { return nuevoSimbolo(sym.DOT); }
-{identificador} { return nuevoSimbolo(sym.IDENT, yytext()); }
-{entero}        { return nuevoSimbolo(sym.INT, new Integer(yytext())); }
-{real}          { return nuevoSimbolo(sym.REAL, new Double(yytext())); }
-{caracter}      { return nuevoSimbolo(sym.CHAR, new Character(yytext().charAt(1))); }
+<YYINITIAL>{
+//int
+ent             { return nuevoSymbol(sym.INT, yytext()); }
+
+//bool
+bin            { return nuevoSymbol(sym.BOOL, yytext()); }
+
+//true
+verdadero           { return nuevoSymbol(sym.TRUE, yytext()); }
+
+//false
+falso	           { return nuevoSymbol(sym.FALSE, yytext()); }
+
+//null
+nulo	           { return nuevoSymbol(sym.NULL, yytext()); }
+
+//void
+nada	           { return nuevoSymbol(sym.VOID, yytext()); }
+
+//return
+retorno	           { return nuevoSymbol(sym.RETURN, yytext()); }
+
+//float
+dec           { return nuevoSymbol(sym.FLOAT, yytext()); }
+
+//char
+sim            { return nuevoSymbol(sym.CHAR, yytext()); }
+
+//string
+pal          { return nuevoSymbol(sym.STRING, yytext()); }
+
+//for
+cur          { return nuevoSymbol(sym.FOR, yytext()); }
+
+//while
+mientras          { return nuevoSymbol(sym.WHILE, yytext()); }
+
+//if
+si          { return nuevoSymbol(sym.IF, yytext()); }
+
+//else
+sino        { return nuevoSymbol(sym.ELSE, yytext()); }
+
+//switch
+encasode          { return nuevoSymbol(sym.SWITCH, yytext()); }
+
+//case
+caso          { return nuevoSymbol(sym.CASE, yytext()); }
+
+//break
+fincaso             { return nuevoSymbol(sym.BREAK, yytext()); }
+
+//function
+pacman            { return nuevoSymbol(sym.FUNCTION, yytext()); }
+
+\"              { return nuevoSymbol(sym.COMILLA, yytext()); }
+"*"             { return nuevoSymbol(sym.MULT, yytext()); }
+"+"             { return nuevoSymbol(sym.SUMA, yytext()); }
+"-"             { return nuevoSymbol(sym.RESTA, yytext()); }
+"/"             { return nuevoSymbol(sym.DIV, yytext()); }
+";"             { return nuevoSymbol(sym.PUNTOCOMA, yytext()); }
+","             { return nuevoSymbol(sym.COMA, yytext()); }
+"("             { return nuevoSymbol(sym.PARIZQ, yytext()); }
+")"             { return nuevoSymbol(sym.PARDER, yytext()); }
+"["             { return nuevoSymbol(sym.BRAIZQ, yytext()); }
+"]"             { return nuevoSymbol(sym.BRADER, yytext()); }
+"->"            { return nuevoSymbol(sym.ASIG, yytext()); }
+"<"             { return nuevoSymbol(sym.MENOR, yytext()); }
+">"             { return nuevoSymbol(sym.MAYOR, yytext()); }
+"=<"            { return nuevoSymbol(sym.MENORIGUAL, yytext()); }
+"=>"            { return nuevoSymbol(sym.MAYORIGUAL, yytext()); }
+"="             { return nuevoSymbol(sym.IGUAL, yytext()); }
+"=!"            { return nuevoSymbol(sym.NOIGUAL, yytext()); }
+":"             { return nuevoSymbol(sym.DOSPUNTOS, yytext()); }
+"."             { return nuevoSymbol(sym.PUNTO, yytext()); }
+{identificador} { return nuevoSymbol(sym.IDENT, yytext()); }
+{entero}        { return nuevoSymbol(sym.INT, new Integer(yytext())); }
+{real}          { return nuevoSymbol(sym.FLOAT, new Double(yytext())); }
+{caracter}      { return nuevoSymbol(sym.CHAR, new Character(yytext().charAt(1))); }
 {comentario}    { /* Los comentarios se imprimirán */
-                  System.out.println("Recognized comment: " + yytext()); }
+                  System.out.println("COMENTARIO: " + yytext()); }
 {espacio}        { /* Ignorar todos los espacios*/ }
+
 .                { System.out.println("Caracter Ilegal, '" + yytext() +
                     "' line: " + yyline + ", column: " + yychar); }
+}
