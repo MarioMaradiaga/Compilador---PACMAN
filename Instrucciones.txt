@@ -1,0 +1,2 @@
+//Para correr CUP y generar el sym.java y el parser.java
+java -jar lib/java-cup-11a.jar -destdir src src/ParserPacMan.cup

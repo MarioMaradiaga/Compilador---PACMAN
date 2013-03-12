@@ -1,14 +1,11 @@
-package compilador.pacman;
-
 import java.io.*;
-import java_cup.runtime.Symbol;
 
 public class Main{
     public static void main(String args[]){
         try{
-            LexerPacMan scanner = new LexerPacMan(new FileReader("Untitled.txt"));
-            parser p = new parser(scanner);
-            p.parse();
+            LexerPacMan scanner = new LexerPacMan(new FileReader(args[0]));
+			parser pars = new parser(scanner); 
+            
         }catch(Exception e){
             System.out.println(e.getMessage());
         }

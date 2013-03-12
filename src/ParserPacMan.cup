@@ -1,0 +1,69 @@
+// CUP specification for a simple expression evaluator (no actions)
+
+import java_cup.runtime.*;
+
+/* Terminals (tokens returned by the scanner). */
+terminal            INT, BOOL, FLOAT, CHAR, STRING, FOR, WHILE, IF, SWITCH;
+terminal            CASE, ASIG, MULT, SUMA, RESTA, DIV, PUNTOCOMA, COMA;
+terminal            PARIZQ, PARDER, BRAIZQ, BRADER, LLAIZQ, LLADER, MENOR;
+terminal            MAYOR, MENORIGUAL, MAYORIGUAL, IGUAL, NOIGUAL, COMILLA; 
+terminal            DOSPUNTOS, PUNTO, BREAK, IDENT, ELSE, TRUE, FALSE;
+terminal            NULL, FUNCTION, VOID, RETURN, CADENA, AND, OR;
+terminal            LLAVIZQ, LLAVDER, ENTERO, CHARVAL, FLOATVAL;
+
+/* Non terminals */
+non terminal  S0, S1, ASIGNACION, EXPRESION, TERMINO, FACTOR, NUM;
+non terminal  TIPO, VARIOSIDENT, BOOLVAL, DECLARACION, VALOR;
+
+/* The grammar */
+S0 ::= S1 DOSPUNTOS S0
+	 | S1 DOSPUNTOS
+;
+
+S1 ::= DECLARACION
+	 | ASIGNACION
+;
+
+DECLARACION ::= TIPO VARIOSIDENT ASIG VALOR
+			  | TIPO ASIGNACION
+;
+
+VARIOSIDENT ::= IDENT COMA VARIOSIDENT
+			  | IDENT COMA IDENT
+;
+			
+ASIGNACION ::= IDENT ASIG VALOR
+;
+
+EXPRESION ::= EXPRESION SUMA TERMINO
+	| EXPRESION RESTA TERMINO
+	| TERMINO
+;
+	
+TERMINO ::= TERMINO MULT FACTOR
+	| TERMINO DIV FACTOR
+	| FACTOR
+;
+	
+FACTOR ::= PARIZQ EXPRESION PARDER
+	| NUM
+;
+
+BOOLVAL ::= TRUE
+		  | FALSE
+;
+	
+NUM ::= ENTERO 
+	  | FLOATVAL
+;
+
+VALOR ::= CADENA
+		| CHARVAL
+		| BOOLVAL
+		| EXPRESION
+;
+	
+TIPO ::= INT
+ 	   | CHAR
+	   | FLOAT
+;
