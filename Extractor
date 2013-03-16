@@ -1,3 +1,7 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package pruebatextarea;
 
 /**
@@ -29,10 +33,9 @@ import javax.swing.text.Element;
     
  
 public class Pruebatextarea extends JFrame {
-  private static JTextArea infoFile;
+	private static JTextArea infoFile;
 	private static JTextArea lines;
         private static JButton bn;
-        private static ArrayList<String> n;
         private static JScrollPane jsp;
  
 	public Pruebatextarea(){
@@ -49,7 +52,6 @@ public class Pruebatextarea extends JFrame {
 		lines = new JTextArea("1");
                 bn= new JButton();
                 bn.setText("Buscar Archivo");
-                n= new ArrayList();
 
 		lines.setBackground(Color.LIGHT_GRAY);
 		lines.setEditable(false);
@@ -106,8 +108,11 @@ public class Pruebatextarea extends JFrame {
                     // Lectura del fichero
                     //agregar lo leido del texto
                     String linea=" ";
-                    while((linea=br.readLine())!=null)
-                         n.add(linea);
+                    while((linea=br.readLine())!=null){
+                        infoFile.append(linea);
+                        infoFile.append(System.getProperty("line.separator"));
+                    }
+                        
           
                   
                     }
@@ -126,12 +131,6 @@ public class Pruebatextarea extends JFrame {
                     }
                     }
                 
-                
-                     for(int i=0;i<n.size();i++){
-                        infoFile.append(n.get(i).toString());
-                        infoFile.append(System.getProperty("line.separator"));
-                     }
-             
             }// fin del action Performed               
                
         });  
