@@ -53,7 +53,7 @@ llaveDer         = \}
 noLlaveDer       = [^}]
 cuerpoComentario = {noLlaveDer}*
 comentario       = {llaveIzq}{cuerpoComentario}{llaveDer}
-espacio          = \r|\n|\r\n|" "|\t\f
+espacio          = \r|\n|\r\n|" "|\t\f|\t
 StringCharacter = [^\r\n\"\\]
 SingleCharacter = [^\r\n\'\\]
 
@@ -67,9 +67,11 @@ SingleCharacter = [^\r\n\'\\]
 
 /*Palabras Reservadas*/
 "bin"             { return nuevoSymbol(sym.BOOL); }
+"cad"             { return nuevoSymbol(sym.STRING); }
 "caso"            { return nuevoSymbol(sym.CASE); }
 "cur"             { return nuevoSymbol(sym.FOR); }
 "dec"             { return nuevoSymbol(sym.FLOAT); }
+"defecto"         { return nuevoSymbol(sym.DEFAULT); }
 "encasode"        { return nuevoSymbol(sym.SWITCH); }
 "ent"             { return nuevoSymbol(sym.INT); }
 "falso"	          { return nuevoSymbol(sym.FALSE); }
@@ -78,7 +80,6 @@ SingleCharacter = [^\r\n\'\\]
 "nada"	          { return nuevoSymbol(sym.VOID); }
 "nulo"	          { return nuevoSymbol(sym.NULL); }
 "pacman"          { return nuevoSymbol(sym.FUNCTION); }
-"pal"             { return nuevoSymbol(sym.STRING); }
 "retorno"	      { return nuevoSymbol(sym.RETURN); }
 "si"              { return nuevoSymbol(sym.IF); }
 "sim"             { return nuevoSymbol(sym.CHAR); }
@@ -97,7 +98,7 @@ SingleCharacter = [^\r\n\'\\]
 "."             { return nuevoSymbol(sym.PUNTO); }
 
 /*String*/
-\"              { yybegin(sym.STRING); string.setLength(0); }
+\"              { yybegin(STRING); string.setLength(0); }
 
 /*Char*/
 \'              { yybegin(sym.CHAR); }
@@ -111,10 +112,11 @@ SingleCharacter = [^\r\n\'\\]
 "->"            { return nuevoSymbol(sym.ASIG); }
 "<"             { return nuevoSymbol(sym.MENOR); }
 ">"             { return nuevoSymbol(sym.MAYOR); }
-"=<"            { return nuevoSymbol(sym.MENORIGUAL); }
-"=>"            { return nuevoSymbol(sym.MAYORIGUAL); }
+"<="            { return nuevoSymbol(sym.MENORIGUAL); }
+">="            { return nuevoSymbol(sym.MAYORIGUAL); }
 "="             { return nuevoSymbol(sym.IGUAL); }
-"=!"            { return nuevoSymbol(sym.NOIGUAL); }
+"!="            { return nuevoSymbol(sym.NOIGUAL); }
+"!"				{ return nuevoSymbol(sym.NOT); }
 "||"            { return nuevoSymbol(sym.OR); }
 "&&"            { return nuevoSymbol(sym.AND); }
 {identificador} { return nuevoSymbol(sym.IDENT, yytext()); }
@@ -127,22 +129,15 @@ SingleCharacter = [^\r\n\'\\]
 }
 
 <STRING> {
-\"                   { yybegin(YYINITIAL); return nuevoSymbol(sym.CADENA, string.toString()); }
-  
-{StringCharacter}+   { string.append( yytext() ); }
-  
-/* escape sequences */
-"\\b"                { string.append( '\b' ); }
-"\\t"                { string.append( '\t' ); }
-"\\n"                { string.append( '\n' ); }
-"\\f"                { string.append( '\f' ); }
-"\\r"                { string.append( '\r' ); }
-"\\\""               { string.append( '\"' ); }
-"\\'"                { string.append( '\'' ); }
-"\\\\"               { string.append( '\\' ); }
-  
-/* error cases */
-\\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
+\"                             { yybegin(YYINITIAL); 
+                                   return nuevoSymbol(sym.CADENA, string.toString()); }
+  {StringCharacter}+            { string.append( yytext() ); }
+  \\t                            { string.append('\t'); }
+  \\n                            { string.append('\n'); }
+
+  \\r                            { string.append('\r'); }
+  \\\"                           { string.append('\"'); }
+  \\                             { string.append('\\'); }
 }
 
 <CHARLITERAL> {
