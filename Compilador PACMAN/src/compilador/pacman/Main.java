@@ -9,7 +9,7 @@ public class Main{
             LexerPacMan scanner = new LexerPacMan(new FileReader("Untitled.txt"));
 //            Symbol symbol;
 //            while((symbol = scanner.next_token()) != null && symbol.sym != 0){
-//                System.out.println(symbol.sym +"="+((symbol.value==null)?"null":symbol.value.toString()));
+//                System.out.println(symbol.sym +"="+((MiToken)symbol.value).getValor());
 //            }
             parser p = new parser(scanner);
             p.parse();

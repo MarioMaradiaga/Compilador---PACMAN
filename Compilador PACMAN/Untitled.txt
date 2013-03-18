@@ -1,54 +1,58 @@
-{Declaraciones y asignaciones Normales}
-ent soyInt -> 100:
-dec soyFloat -> 9.1:
-cad soyString -> "Hola, soy una string!":
-bin soyBoolVerdadero -> verdadero:
-bin soyBoolFalse -> falso:
+main[
+	{Declaraciones y asignaciones Normales}
+	ent soyInt -> 100:
+	dec soyFloat -> 9.1:
+	cad soyString -> "Hola, soy una string!":
+	bin soyBoolVerdadero -> verdadero:
+	bin soyBoolFalse -> falso:
 
-{Declaraciones multiples}
-ent somos, varias, variables:
-dec de, distintos, tipos:
+	{Declaraciones multiples}
+	ent somos, varias, variables:
+	dec de, distintos, tipos:
 
-{Bloques de decisión}
-{IF}
-si ( x = 3 || ( y < 5 && !z  ) )[
+	{Bloques de decisión}
+	si ( x -> 3 || ( y <= 5 && !z  ) )[
+		si ( n = 5 )[
+			leer(y:
+			y -> 98:
+		]sino si ( y = 9 )[
+			escribir(y):
+			y -> 99:
+		]sino[
+			{Hago nada. Este sino es altamente innecesario...}
+		]
+	]
 
-]
+	mientras(n != 7)[
+		bin x = verdadero:
+	]
 
-si ( n >= 5 )[
-	y -> 98:
-]sino si ( y <= 9 )[
-	y -> 99:
-]sino[
-	{Hago nada. Este sino es altamente innecesario...}
-]
+	cur(ent i -> 8: i < 9: i -> i + 3)[
+		d -> "Hola":
+	]
 
-{WHILE}
-mientras(n != 7)[
-	bin x -> verdadero:
-]
+	encasode (hola)[
+		caso 5;
+			oi -> "No se que hago…":
+		fincaso:
+		caso 9;
+			oi -> "No se que haré…":
+		fincaso:
+	]
 
-cur(ent i -> 8: i < 9: i -> i + 3)[
-	d -> "Hola":
-]
+	encasode (hola)[
+		caso '5';
+			oi -> "No se que hago…":
+		fincaso:
+		caso '9';
+			oi -> "No se que haré…":
+		fincaso:
+		defecto;
+			oi -> "Caso RARO":
+		fincaso:
+	]
 
-encasode (hola)[
-	caso 5;
-		oi -> "No se que hago…":
-	fincaso:
-	caso 9;
-		oi -> "No se que haré…":
-	fincaso:
-]
-
-encasode (hola)[
-	caso '5';
-		oi -> "No se que hago…":
-	fincaso:
-	caso '9';
-		oi -> "No se que haré…":
-	fincaso:
-	defecto;
-		oi -> "Caso RARO":
-	fincaso:
+	pacman nada soyUnaFuncion(ent hola)[
+		hola = "Hola":
+	]
 ]

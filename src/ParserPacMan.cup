@@ -2,37 +2,56 @@
 
 import java_cup.runtime.*;
 
-/* Terminals (tokens returned by the scanner). */
-terminal            INT, BOOL, FLOAT, CHAR, STRING, FOR, WHILE, IF, SWITCH;
-terminal            CASE, ASIG, MULT, SUMA, RESTA, DIV, PUNTOCOMA, COMA;
-terminal            PARIZQ, PARDER, BRAIZQ, BRADER, LLAIZQ, LLADER, MENOR;
-terminal            MAYOR, MENORIGUAL, MAYORIGUAL, IGUAL, NOIGUAL, COMILLA; 
-terminal            DOSPUNTOS, PUNTO, BREAK, IDENT, ELSE, TRUE, FALSE;
-terminal            NULL, FUNCTION, VOID, RETURN, CADENA, AND, OR, NOT;
-terminal            LLAVIZQ, LLAVDER, ENTERO, CHARVAL, FLOATVAL, DEFAULT;
+parser code {: 
+public void syntax_error(java_cup.runtime.Symbol current) {
+	int linea = ((MiToken) current.value).getLinea();
+	int columna = ((MiToken) current.value).getColumna();
+	String error = "";
+	if (current.sym == sym.EOF) 
+	{
+		error = "Fin de archivo inesperado.";
+	} else 
+	{
+		error = "Error de Sintaxis: No se esperaba el token (\"" + ( (MiToken)(current.value) ).getValor() + "\"), Linea: " + 
+		(linea+1) + ", Columna: " + (columna);
+	}
+	System.out.println(error);
+}
+:}
 
-/* Non terminals */
-non terminal S0, S1, S2, ASIGNACION, EXPARIT, EXPBOOL, TERMINO, FACTOR;
-non terminal TIPO, VARIOSIDENT, BOOLVAL, DECLARACION, VALOR, NUM;
-non terminal OPREL, OPLOG, TERMBOOL, EXPRESION, BLOQUEIF, BLOQUEELSE, TEXT, NEGACION, BLOQUEWHILE, BLOQUEFOR, DECLARACIONVALOR, BLOQUESWITCH, CASOSINT, CASOSCHAR, FINCASOS, CASOS;
+terminal INT, BOOL, FLOAT, CHAR, STRING, FOR, WHILE, IF, SWITCH, CASE, ASIG, MULT, SUMA, RESTA, DIV, PUNTOCOMA, COMA, PARIZQ; 
+terminal PARDER, BRAIZQ, BRADER, MENOR, MAYOR, MENORIGUAL, MAYORIGUAL, IGUAL, NOIGUAL, DOSPUNTOS, BREAK, IDENT, ELSE, TRUE;
+terminal FALSE, NULL, FUNCTION, VOID, RETURN, CADENA, AND, OR, NOT, ENTERO, CHARVAL, FLOATVAL, DEFAULT, MAIN, READ, WRITE;
 
-S0 ::= S1 DOSPUNTOS S0
-	 | S2 S0
-	 | 
+non terminal s0, s1, s2, asignacion, expArit, expBool, termino, factor, tipo, variosIdent, boolVal, declaracion, valor, num;
+non terminal opRel, opLog, termBool, expresion, bloqueIf, bloqueElse, text, negacion, bloqueWhile, bloqueFor, declaracionValor;
+non terminal bloqueSwitch, finCasos, casos, comienzo, bloqueFunction, tipoFunction, parametro, parametros; 
+non terminal retorno, valoresCaso, inOut, inOutVal;
+
+comienzo ::= MAIN BRAIZQ s0 BRADER
+; 
+
+s0 ::= s1 DOSPUNTOS s0
+	 | s2 s0
+	 | error DOSPUNTOS
+	 | 	
 ;
 
-S1 ::= DECLARACION
-	 | ASIGNACION
+s1 ::= declaracion
+	 | asignacion
+	 | inOut
+	 | retorno
 ;
 
-S2 ::= BLOQUEIF
-	 | BLOQUEWHILE
-	 | BLOQUEFOR
-	 | BLOQUESWITCH
+s2 ::= bloqueIf
+	 | bloqueWhile
+	 | bloqueFor
+	 | bloqueSwitch
+	 | bloqueFunction
 ;
 
 /*Tipos*/	
-TIPO ::= STRING
+tipo ::= STRING
        | INT
  	   | CHAR
 	   | FLOAT
@@ -40,64 +59,77 @@ TIPO ::= STRING
 ;
 
 /*Declaraciones*/
-DECLARACION ::= TIPO VARIOSIDENT
-			  | DECLARACIONVALOR
+declaracion ::= tipo variosIdent
+			  | declaracionValor
 ;
 
-DECLARACIONVALOR ::= TIPO ASIGNACION
+declaracionValor ::= tipo asignacion
 ;
 
-VARIOSIDENT ::= IDENT COMA VARIOSIDENT
+variosIdent ::= IDENT COMA variosIdent
 			  | IDENT
 ;
 
+inOut ::= READ PARIZQ inOutVal PARDER
+		| WRITE PARIZQ inOutVal PARDER
+;
+
+inOutVal ::= valor
+		   | IDENT
+;
+
+retorno ::= RETURN valor
+		  | RETURN IDENT
+;
+
 /*Valores*/
-BOOLVAL ::= TRUE
+boolVal ::= TRUE
 		  | FALSE
 ;
 	
-NUM ::= ENTERO 
+num ::= ENTERO 
 	  | FLOATVAL
 ;
 
-TEXT ::= CADENA
+text ::= CADENA
 		| CHARVAL
 ;
 
-VALOR ::= NUM
-		| TEXT
-		| BOOLVAL
+valor ::= num
+		| text
+		| boolVal
+		| NULL
 ;
 
-EXPRESION ::= EXPARIT
-			| EXPBOOL
+expresion ::= expArit
+			| expBool
 ;
 
 /*Asignaciones*/		
-ASIGNACION ::= VARIOSIDENT ASIG EXPRESION
+asignacion ::= variosIdent ASIG expresion
 ;
 
 /*Expresiones Aritméticas*/
-EXPARIT ::= EXPARIT SUMA TERMINO
-	| EXPARIT RESTA TERMINO
-	| TERMINO
+expArit ::= expArit SUMA termino
+	| expArit RESTA termino
+	| termino
 ;
 
-TERMINO ::= TERMINO MULT FACTOR
-	| TERMINO DIV FACTOR
-	| FACTOR
+termino ::= termino MULT factor
+	| termino DIV factor
+	| factor
 ;
 	
-FACTOR ::= PARIZQ EXPARIT PARDER
-	| VALOR
+factor ::= PARIZQ expArit PARDER
+	| valor
 	| IDENT
 ;
 
-NEGACION ::= NOT IDENT
+negacion ::= NOT IDENT
 ;
 
 /*Operadores Relacionales*/
-OPREL ::= MENOR
+opRel ::= MENOR
 		| MAYOR
 		| MENORIGUAL
 		| MAYORIGUAL
@@ -106,51 +138,62 @@ OPREL ::= MENOR
 ;
 		
 /*Operadores Lógicos*/
-OPLOG ::= AND
+opLog ::= AND
 		| OR
 ;
 
 /*Expresion Booleana*/
-EXPBOOL ::= TERMBOOL OPLOG EXPBOOL
-		  | TERMBOOL
+expBool ::= termBool opLog expBool
+		  | termBool
 ;
 
-TERMBOOL ::= IDENT OPREL VALOR
-		   | IDENT OPREL IDENT
-		   | NEGACION
-		   | PARIZQ EXPBOOL PARDER
+termBool ::= IDENT opRel valor
+		   | IDENT opRel IDENT
+		   | negacion
+		   | PARIZQ expBool PARDER
 ;
 
 /*Estructuras*/
-BLOQUEIF ::= IF PARIZQ EXPBOOL PARDER BRAIZQ S0 BRADER BLOQUEELSE
+bloqueIf ::= IF PARIZQ expBool PARDER BRAIZQ s0 BRADER bloqueElse
+		   | error BRAIZQ s0 BRADER bloqueElse
 ;
 
-BLOQUEELSE ::= ELSE BLOQUEIF
-			 | ELSE BRAIZQ S0 BRADER
+bloqueElse ::= ELSE bloqueIf
+			 | ELSE BRAIZQ s0 BRADER
 			 | 
 ;
 
-BLOQUEWHILE ::= WHILE PARIZQ EXPBOOL PARDER BRAIZQ S0 BRADER
+bloqueWhile ::= WHILE PARIZQ expBool PARDER BRAIZQ s0 BRADER
 ;
 
-BLOQUEFOR ::= FOR PARIZQ DECLARACIONVALOR DOSPUNTOS EXPBOOL DOSPUNTOS ASIGNACION PARDER BRAIZQ S0 BRADER
+bloqueFor ::= FOR PARIZQ declaracionValor DOSPUNTOS expBool DOSPUNTOS asignacion PARDER BRAIZQ s0 BRADER
 ;
 
-BLOQUESWITCH ::= SWITCH PARIZQ IDENT PARDER BRAIZQ CASOS FINCASOS BRADER
+bloqueSwitch ::= SWITCH PARIZQ IDENT PARDER BRAIZQ casos finCasos BRADER
 ;
 
-CASOS ::= CASOSINT
-		| CASOSCHAR
+valoresCaso ::= ENTERO
+			  | CHARVAL
 ;
 
-CASOSINT ::= CASE ENTERO PUNTOCOMA S0 BREAK DOSPUNTOS CASOSINT
-		   | CASE ENTERO PUNTOCOMA S0 BREAK DOSPUNTOS
+casos ::= CASE valoresCaso PUNTOCOMA s0 BREAK DOSPUNTOS casos
+		| CASE valoresCaso PUNTOCOMA s0 BREAK DOSPUNTOS
 ;
 
-CASOSCHAR ::= CASE CHARVAL PUNTOCOMA S0 BREAK DOSPUNTOS CASOSCHAR
-		    | CASE CHARVAL PUNTOCOMA S0 BREAK DOSPUNTOS
-;
-
-FINCASOS ::= DEFAULT PUNTOCOMA S0 BREAK DOSPUNTOS
+finCasos ::= DEFAULT PUNTOCOMA s0 BREAK DOSPUNTOS
 		   | 
+;
+
+tipoFunction ::= tipo
+			   | VOID
+;
+
+parametro ::= tipo IDENT
+;
+
+parametros ::= parametros COMA parametro
+			 | parametro
+;
+
+bloqueFunction ::= FUNCTION tipoFunction IDENT PARIZQ parametros PARDER BRAIZQ s0 BRADER
 ;
