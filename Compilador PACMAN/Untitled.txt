@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 main[
 	{Declaraciones y asignaciones Normales}
 	ent soyInt -> 100:
@@ -62,6 +63,52 @@ main[
 
 	pacman nada soyUnaFuncion (ent hola)[
 		oi -> "Caso RARO":
+=======
+ Declaraciones y asignaciones Normales}
+ent soyInt -> 100:
+dec soyFloat -> 9.1:
+cad soyString -> "Hola, soy una string!":
+bin soyBoolVerdadero -> verdadero:
+bin soyBoolFalse -> falso:;
+										3
+{Declaraciones multiples}
+ent somos, varias, variables:
+dec de, distintos, tipos:
+{Bloques de decisión}
+{IF}
+si ( x = 3 || ( y < 5 && !z  ) )[
+]
+si ( n >= 5 )[
+	y -> 98:
+]sino si ( y <= 9 )[
+	y -> 99:
+]sino[
+	{Hago nada. Este sino es altamente innecesario...}
+]
+{WHILE}
+mientras(n != 7)[
+	bin x -> verdadero:
+]
+cur(ent i -> 8: i < 9: i -> i + 3)[
+	d -> "Hola":
+]
+encasode (hola)[
+	caso 5;
+		oi -> "No se que hago…":
+	fincaso:
+	caso 9;
+		oi -> "No se que haré…":
+	fincaso:
+]
+encasode (hola)[
+	caso '5';
+		oi -> "No se que hago…":
+	fincaso:
+	caso '9';
+		oi -> "No se que haré…":
+	fincaso:
+	defecto;
+>>>>>>> dfd
 		oi -> "Caso RARO":
 		oi -> "Caso RARO":
 	]
