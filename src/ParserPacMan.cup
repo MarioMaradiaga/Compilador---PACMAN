@@ -17,30 +17,36 @@ public void syntax_error(java_cup.runtime.Symbol current) {
 	}
 	System.out.println(error);
 }
+
+public void report_fatal_error(String message, Object info) 
+{
+    System.out.println("Se encontró un error fatal. No se puede continuar el parseo.");
+}
 :}
 
 terminal INT, BOOL, FLOAT, CHAR, STRING, FOR, WHILE, IF, SWITCH, CASE, ASIG, MULT, SUMA, RESTA, DIV, PUNTOCOMA, COMA, PARIZQ; 
 terminal PARDER, BRAIZQ, BRADER, MENOR, MAYOR, MENORIGUAL, MAYORIGUAL, IGUAL, NOIGUAL, DOSPUNTOS, BREAK, IDENT, ELSE, TRUE;
 terminal FALSE, NULL, FUNCTION, VOID, RETURN, CADENA, AND, OR, NOT, ENTERO, CHARVAL, FLOATVAL, DEFAULT, MAIN, READ, WRITE;
 
-non terminal s0, s1, s2, asignacion, expArit, expBool, termino, factor, tipo, variosIdent, boolVal, declaracion, valor, num;
-non terminal opRel, opLog, termBool, expresion, bloqueIf, bloqueElse, text, negacion, bloqueWhile, bloqueFor, declaracionValor;
-non terminal bloqueSwitch, finCasos, casos, comienzo, bloqueFunction, tipoFunction, parametro, parametros; 
-non terminal retorno, valoresCaso, inOut, inOutVal;
+non terminal s0, s1, asignacion, expArit, expBool, termino, factor, tipo, variosIdent, boolVal, declaracion, valor, num;
+non terminal opRel, termBool, bloqueIf, bloqueElse, text, bloqueWhile, bloqueFor, declaracionValor;
+non terminal bloqueSwitch, finCasos, casos, comienzo, bloqueFunction, tipoFunction, parametro, parametros, comparacion; 
+non terminal retorno, valoresCaso, inOut, inOutVal, bloque, funcPar, funcDec, asignacionFor, s2, factorBool, primaryBool;
 
 comienzo ::= MAIN BRAIZQ s0 BRADER
 ; 
 
-s0 ::= s1 DOSPUNTOS s0
+s0 ::= 
+	 | s1 s0
 	 | s2 s0
-	 | error DOSPUNTOS
-	 | 	
 ;
 
 s1 ::= declaracion
 	 | asignacion
 	 | inOut
 	 | retorno
+	 | error DOSPUNTOS
+	 | error BRADER
 ;
 
 s2 ::= bloqueIf
@@ -49,6 +55,7 @@ s2 ::= bloqueIf
 	 | bloqueSwitch
 	 | bloqueFunction
 ;
+
 
 /*Tipos*/	
 tipo ::= STRING
@@ -59,7 +66,7 @@ tipo ::= STRING
 ;
 
 /*Declaraciones*/
-declaracion ::= tipo variosIdent
+declaracion ::= tipo variosIdent DOSPUNTOS
 			  | declaracionValor
 ;
 
@@ -70,16 +77,16 @@ variosIdent ::= IDENT COMA variosIdent
 			  | IDENT
 ;
 
-inOut ::= READ PARIZQ inOutVal PARDER
-		| WRITE PARIZQ inOutVal PARDER
+inOut ::= READ PARIZQ inOutVal PARDER DOSPUNTOS
+		| WRITE PARIZQ inOutVal PARDER DOSPUNTOS
 ;
 
 inOutVal ::= valor
 		   | IDENT
 ;
 
-retorno ::= RETURN valor
-		  | RETURN IDENT
+retorno ::= RETURN valor DOSPUNTOS
+		  | RETURN IDENT DOSPUNTOS
 ;
 
 /*Valores*/
@@ -101,12 +108,12 @@ valor ::= num
 		| NULL
 ;
 
-expresion ::= expArit
-			| expBool
-;
 
 /*Asignaciones*/		
-asignacion ::= variosIdent ASIG expresion
+asignacion ::= variosIdent ASIG expBool DOSPUNTOS
+;
+
+asignacionFor ::= variosIdent ASIG expArit 
 ;
 
 /*Expresiones Aritméticas*/
@@ -120,12 +127,9 @@ termino ::= termino MULT factor
 	| factor
 ;
 	
-factor ::= PARIZQ expArit PARDER
-	| valor
-	| IDENT
-;
-
-negacion ::= NOT IDENT
+factor ::= PARIZQ expBool PARDER
+		 | valor
+	     | IDENT
 ;
 
 /*Operadores Relacionales*/
@@ -136,37 +140,44 @@ opRel ::= MENOR
 		| IGUAL
 		| NOIGUAL
 ;
-		
-/*Operadores Lógicos*/
-opLog ::= AND
-		| OR
-;
 
 /*Expresion Booleana*/
-expBool ::= termBool opLog expBool
-		  | termBool
+expBool ::= termBool 
+		  | expBool OR termBool
 ;
 
-termBool ::= IDENT opRel valor
-		   | IDENT opRel IDENT
-		   | negacion
-		   | PARIZQ expBool PARDER
+termBool ::= factorBool
+		   | termBool AND factorBool
+;
+
+factorBool ::= primaryBool
+			 | NOT primaryBool
+;
+
+primaryBool ::= comparacion
+			  | expArit
+;
+
+comparacion ::= IDENT opRel expArit
 ;
 
 /*Estructuras*/
 bloqueIf ::= IF PARIZQ expBool PARDER BRAIZQ s0 BRADER bloqueElse
-		   | error BRAIZQ s0 BRADER bloqueElse
 ;
 
 bloqueElse ::= ELSE bloqueIf
-			 | ELSE BRAIZQ s0 BRADER
+			 | ELSE bloque
 			 | 
 ;
 
-bloqueWhile ::= WHILE PARIZQ expBool PARDER BRAIZQ s0 BRADER
+bloqueWhile ::= WHILE PARIZQ expBool PARDER bloque
+			| WHILE error PARDER bloque
+			| WHILE error bloque
 ;
 
-bloqueFor ::= FOR PARIZQ declaracionValor DOSPUNTOS expBool DOSPUNTOS asignacion PARDER BRAIZQ s0 BRADER
+bloqueFor ::= FOR PARIZQ declaracionValor expBool DOSPUNTOS asignacionFor PARDER bloque
+			| FOR error PARDER bloque
+			| FOR error bloque
 ;
 
 bloqueSwitch ::= SWITCH PARIZQ IDENT PARDER BRAIZQ casos finCasos BRADER
@@ -177,10 +188,20 @@ valoresCaso ::= ENTERO
 ;
 
 casos ::= CASE valoresCaso PUNTOCOMA s0 BREAK DOSPUNTOS casos
+		| error valoresCaso PUNTOCOMA s0 BREAK DOSPUNTOS casos
+		| error PUNTOCOMA s0 BREAK DOSPUNTOS casos
+		| error s0 BREAK DOSPUNTOS casos
+		| error DOSPUNTOS casos
 		| CASE valoresCaso PUNTOCOMA s0 BREAK DOSPUNTOS
+		| error valoresCaso PUNTOCOMA s0 BREAK DOSPUNTOS 
+		| error PUNTOCOMA s0 BREAK DOSPUNTOS 
+		| error s0 BREAK DOSPUNTOS 
+		| error DOSPUNTOS 
+
 ;
 
 finCasos ::= DEFAULT PUNTOCOMA s0 BREAK DOSPUNTOS
+		   | DEFAULT error BREAK DOSPUNTOS
 		   | 
 ;
 
@@ -188,12 +209,22 @@ tipoFunction ::= tipo
 			   | VOID
 ;
 
-parametro ::= tipo IDENT
+parametro ::= tipo IDENT 
 ;
 
-parametros ::= parametros COMA parametro
-			 | parametro
+parametros ::= parametro COMA parametros 
+			 | parametro 
 ;
 
-bloqueFunction ::= FUNCTION tipoFunction IDENT PARIZQ parametros PARDER BRAIZQ s0 BRADER
+bloqueFunction ::= funcDec funcPar bloque
+;
+
+funcDec ::= FUNCTION tipoFunction IDENT 
+;
+
+funcPar ::= PARIZQ parametros PARDER
+;
+
+bloque ::= BRAIZQ s0 BRADER 
+		 | error s0 BRADER
 ;

@@ -4,7 +4,7 @@ import java.io.*;
 import java_cup.runtime.Symbol;
 
 public class Main{
-    public static void main(String args[]){
+    public static void main (String args[]){
         try{
             LexerPacMan scanner = new LexerPacMan(new FileReader("Untitled.txt"));
 //            Symbol symbol;
